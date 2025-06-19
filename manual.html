@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario - Calculadora de Descuentos ASHE S.A.S</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        header img {
+            max-width: 180px;
+            margin-bottom: 15px;
+        }
+        h1 {
+            color: #004D7A;
+            font-size: 2em;
+            margin: 0;
+        }
+        h2 {
+            color: #004D7A;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 {
+            color: #007BFF;
+        }
+        p, li {
+            font-size: 1.1em;
+        }
+        ul, ol {
+            padding-left: 25px;
+        }
+        code {
+            background-color: #eef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        .note {
+            background-color: #fffbe6;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 0.9em;
+            color: #777;
+        }
+        @media print {
+            body {
+                background-color: #fff;
+            }
+            .container {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="LOGO ASHE SIN FONDO.png" alt="Logo ASHE SAS">
+            <h1>Manual de Usuario</h1>
+            <p>Calculadora de Descuentos Pronto Pago ASHE S.A.S</p>
+        </header>
+
+        <section>
+            <h2>1. Introducción</h2>
+            <p>Esta herramienta está diseñada para calcular de forma precisa los descuentos por pronto pago de las facturas de ASHE S.A.S., gestionar una lista de liquidaciones durante una sesión y generar borradores de Notas de Crédito y otros reportes.</p>
+        </section>
+
+        <section>
+            <h2>2. Cómo Calcular un Descuento (Paso a Paso)</h2>
+            <ol>
+                <li>
+                    <h3>ID de Factura</h3>
+                    <p>En el campo <code>ID de Factura</code>, introduce el número de la factura (ej: <code>12345</code>). El prefijo <code>MDVA-</code> se añade automáticamente.</p>
+                </li>
+                <li>
+                    <h3>Valor Total de la Factura</h3>
+                    <p>Ingresa el valor total que aparece en la factura, <strong>con IVA incluido</strong>. Este campo es obligatorio.</p>
+                </li>
+                <li>
+                    <h3>Parte de la Factura sin IVA</h3>
+                    <p>Este es el campo más importante para un cálculo preciso. Dependiendo del tipo de factura, sigue una de estas tres reglas:</p>
+                    
+                    <div class="note">
+                        <strong>Regla de Oro:</strong> Si todos los productos de la factura están gravados con IVA, puedes <strong>dejar este campo en blanco</strong>. El sistema lo interpretará automáticamente como 0.
+                    </div>
+
+                    <ul>
+                        <li><strong>A) Factura 100% con IVA:</strong><br>
+                        Deja el campo en blanco o ingresa <code>0</code>.</li>
+                        
+                        <li><strong>B) Factura 100% SIN IVA (ej. exportaciones):</strong><br>
+                        Ingresa <strong>el mismo valor</strong> que pusiste en "Valor Total de la Factura".</li>
+                        
+                        <li><strong>C) Factura Mixta (productos con y sin IVA):</strong><br>
+                        Ingresa la <strong>suma total de los productos que NO tienen IVA</strong>.<br>
+                        <em>Ejemplo:</em> Para una factura con un total de $1.500.000, que contiene un producto de $1.000.000 (con IVA) y otro de $500.000 (sin IVA), debes ingresar <code>500000</code> en este campo.</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Fechas</h3>
+                    <p>Selecciona la <strong>Fecha de Emisión</strong> y la <strong>Fecha de Pago</strong>. Ambos campos son obligatorios. La fecha de pago no puede ser anterior a la de emisión.</p>
+                </li>
+                <li>
+                    <h3>Calcular</h3>
+                    <p>Haz clic en el botón <strong><code>Calcular Descuento</code></strong>. Si hay algún error, se mostrará una notificación en la parte superior de la pantalla.</p>
+                </li>
+            </ol>
+        </section>
+
+        <section>
+            <h2>3. Manejo de la Lista de Facturas</h2>
+            <p>Una vez que agregas un cálculo, aparecerá en la sección "Facturas Liquidadas en Sesión".</p>
+            <ul>
+                <li><strong>Eliminar una Factura:</strong> Haz clic en el botón rojo <strong><code>X</code></strong> al final de una fila.</li>
+                <li><strong>Deshacer Eliminación:</strong> Inmediatamente después de eliminar, aparecerá una notificación con un enlace "Deshacer" por 6 segundos.</li>
+                <li><strong>Acciones de la Lista:</strong> Cuando hay facturas en la lista, los siguientes botones estarán activos al final de la tabla:
+                    <ul>
+                        <li><strong><code>Imprimir Resumen</code>:</strong> Genera un documento imprimible con la tabla completa.</li>
+                        <li><strong><code>Exportar CSV</code>:</strong> Descarga un archivo compatible con Excel.</li>
+                        <li><strong><code>Limpiar Todo</code>:</strong> Elimina todas las facturas de la lista.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. Generador de Borrador de Notas</h2>
+            <ul>
+                <li><strong>Abrir el Borrador:</strong> Después de un cálculo, haz clic en <strong><code>Generar Nota de Crédito</code></strong>.</li>
+                <li><strong>Datos Automáticos:</strong> El formulario se abrirá con la fecha, el número de factura y el valor del descuento ya ingresados.</li>
+                <li><strong>Navegación por Teclado:</strong> Puedes usar la tecla <strong><code>Enter</code></strong> para saltar cómodamente de un campo al siguiente.</li>
+                <li><strong>Imprimir Nota:</strong> Usa el botón <strong><code>Imprimir Nota</code></strong> para generar el documento con el formato corporativo.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>5. Funciones Adicionales</h2>
+            <ul>
+                <li><strong>Modo Oscuro:</strong> Activa o desactiva el tema oscuro usando el interruptor en la esquina superior derecha.</li>
+                <li><strong>Copiar Valores:</strong> Junto a los resultados importantes (Valor del Descuento, Total a Pagar, etc.), hay un icono para copiar el valor numérico al portapapeles.</li>
+                <li><strong>Diseño Adaptable:</strong> La aplicación ajusta su diseño para funcionar correctamente tanto en ordenadores de escritorio como en dispositivos móviles.</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Versión 2.1 - Manual actualizado el 19 de Junio de 2025 / Mauricio Luftman</p>
+        </footer>
+    </div>
+</body>
+</html>
