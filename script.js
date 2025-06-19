@@ -1,5 +1,3 @@
-// CONTENIDO COMPLETO Y CORREGIDO DE script.js
-
 document.addEventListener('DOMContentLoaded', () => {
     // --- Referencias a los elementos del DOM ---
     const body = document.body;
@@ -241,18 +239,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 ivaCalculado: ivaCalculado
             };
 
-            diasManualInput.value = diasTranscurridos;
-            diasTranscurridosOutput.textContent = `${diasTranscurridos} días`;
-            valorBaseDescuentoOutput.textContent = formatCurrency(valorBaseDescuentoTotal);
-            valorConIvaOutput.textContent = formatCurrency(valorParteConIvaBruto);
-            ivaCalculadoOutput.textContent = formatCurrency(ivaCalculado);
-            porcentajeDescuentoOutput.textContent = `${porcentajeDescuentoAplicado.toFixed(2)}%`;
-            valorDescuentoOutput.textContent = formatCurrency(valorDescuento);
-            totalPagarOutput.textContent = formatCurrency(totalPagar);
+            if (diasManualInput) diasManualInput.value = diasTranscurridos;
+            if (diasTranscurridosOutput) diasTranscurridosOutput.textContent = `${diasTranscurridos} días`;
+            if (valorBaseDescuentoOutput) valorBaseDescuentoOutput.textContent = formatCurrency(valorBaseDescuentoTotal);
+            if (valorConIvaOutput) valorConIvaOutput.textContent = formatCurrency(valorParteConIvaBruto);
+            if (ivaCalculadoOutput) ivaCalculadoOutput.textContent = formatCurrency(ivaCalculado);
+            if (porcentajeDescuentoOutput) porcentajeDescuentoOutput.textContent = `${porcentajeDescuentoAplicado.toFixed(2)}%`;
+            if (valorDescuentoOutput) valorDescuentoOutput.textContent = formatCurrency(valorDescuento);
+            if (totalPagarOutput) totalPagarOutput.textContent = formatCurrency(totalPagar);
             
-            addToListBtn.style.display = 'inline-block';
-            printBtn.style.display = 'inline-block';
-            generarNotaBtn.style.display = 'inline-block';
+            if (addToListBtn) addToListBtn.style.display = 'inline-block';
+            if (printBtn) printBtn.style.display = 'inline-block';
+            if (generarNotaBtn) generarNotaBtn.style.display = 'inline-block';
         });
     }
     
@@ -322,29 +320,54 @@ document.addEventListener('DOMContentLoaded', () => {
         notaTotalInput.value = formatCurrency(total);
     }
 
+    // ******** INICIO DE LA CORRECCIÓN CLAVE ********
     if (generarNotaBtn) {
         generarNotaBtn.addEventListener('click', () => {
             const now = new Date();
-            document.getElementById('notaAnio').value = now.getFullYear();
-            document.getElementById('notaMes').value = String(now.getMonth() + 1).padStart(2, '0');
-            document.getElementById('notaDia').value = String(now.getDate()).padStart(2, '0');
-            const facturaId = currentCalculation.id ? currentCalculation.id.replace('MDVA-', '') : facturaIdNumberInput.value.trim() || 'N/A';
-            document.getElementById('notaFactura').value = facturaId;
-            notaDetailInputs.forEach(input => input.value = '');
-            notaValorInputs.forEach(input => input.value = '');
+            
+            // Buscamos cada elemento Y VERIFICAMOS que existe antes de usarlo
+            const notaAnio = document.getElementById('notaAnio');
+            if (notaAnio) notaAnio.value = now.getFullYear();
+
+            const notaMes = document.getElementById('notaMes');
+            if (notaMes) notaMes.value = String(now.getMonth() + 1).padStart(2, '0');
+            
+            const notaDia = document.getElementById('notaDia');
+            if (notaDia) notaDia.value = String(now.getDate()).padStart(2, '0');
+
+            const notaFactura = document.getElementById('notaFactura');
+            if (notaFactura) {
+                const facturaId = currentCalculation.id ? currentCalculation.id.replace('MDVA-', '') : (facturaIdNumberInput.value.trim() || 'N/A');
+                notaFactura.value = facturaId;
+            }
+
+            if (notaDetailInputs) notaDetailInputs.forEach(input => input.value = '');
+            if (notaValorInputs) notaValorInputs.forEach(input => input.value = '');
+            
             const primerDetalleInput = document.querySelector('.detail-item-input');
-            if (primerDetalleInput) primerDetalleInput.value = `Descuento por pronto pago factura MDVA-${facturaId}`;
+            if (primerDetalleInput) {
+                const facturaId = currentCalculation.id ? currentCalculation.id.replace('MDVA-', '') : (facturaIdNumberInput.value.trim() || 'N/A');
+                primerDetalleInput.value = `Descuento por pronto pago factura MDVA-${facturaId}`;
+            }
+
             const primerValorInput = document.querySelector('.valor-input');
-            if (primerValorInput && currentCalculation.valorDescuento) primerValorInput.value = formatCurrency(currentCalculation.valorDescuento);
+            if (primerValorInput && currentCalculation.valorDescuento) {
+                primerValorInput.value = formatCurrency(currentCalculation.valorDescuento);
+            }
+
             ['notaAgencia', 'notaCliente', 'notaRepVentas', 'notaNit', 'notaDireccion', 'notaCiudad', 'notaElaborado', 'notaAutorizado'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.value = '';
             });
-            if (document.getElementById('notaCreditoRadio')) document.getElementById('notaCreditoRadio').checked = true;
+
+            const notaCreditoRadio = document.getElementById('notaCreditoRadio');
+            if (notaCreditoRadio) notaCreditoRadio.checked = true;
+            
             recalcularNotaTotals();
             toggleModal(borradorNotasModal, true);
         });
     }
+    // ******** FIN DE LA CORRECCIÓN CLAVE ********
 
     if (closeBorradorBtn) closeBorradorBtn.addEventListener('click', () => toggleModal(borradorNotasModal, false));
     if (printNotaBtn) {
@@ -429,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 facturasCalculadas.splice(lastDeleted.index, 0, lastDeleted.factura);
                 lastDeleted = { factura: null, index: null };
                 renderFacturasLista();
-                undoContainer.style.display = 'none';
+                if (undoContainer) undoContainer.style.display = 'none';
             }
         });
     }
@@ -482,7 +505,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (modalClearCancelBtn) modalClearCancelBtn.addEventListener('click', () => toggleModal(confirmClearModal, false));
     
     // --- Inicialización ---
-    // Solo ejecutar estas funciones si estamos en la página principal (la de la calculadora)
     if (document.getElementById('calcularBtn')) {
         loadFacturas();
         resetFields();
