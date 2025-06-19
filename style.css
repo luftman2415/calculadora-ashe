@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+    --primary-blue: #004D7A;
+    --secondary-blue: #007BFF;
+    --light-gray: #f8f9fa;
+    --medium-gray: #e9ecef;
+    --text-color: #343a40;
+    --white: #ffffff;
+    --border-color: #dee2e6;
+    --border-radius: 8px;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --secondary-color: #6c757d;
+}
+
+body {
+    font-family: 'Roboto', sans-serif; margin: 0; padding: 20px;
+    background-color: var(--light-gray); color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+body.modal-open { overflow: hidden; }
+body.modal-open .theme-switch-wrapper { display: none; }
+
+.container {
+    background-color: var(--white); border-radius: var(--border-radius); box-shadow: var(--shadow);
+    width: 100%; max-width: 900px; padding: 30px; box-sizing: border-box;
+    margin: 40px auto 20px auto; transition: background-color 0.3s; position: relative;
+}
+
+/* --- TEMA OSCURO --- */
+body.dark-mode {
+    --light-gray: #1a1a1a; --medium-gray: #2c2c2c; --white: #252525;
+    --text-color: #e0e0e0; --border-color: #444; --shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+body.dark-mode .logo { filter: brightness(0) invert(1); }
+body.dark-mode .container input, body.dark-mode .container textarea { background-color: #333; color: var(--text-color); border-color: #555; }
+body.dark-mode .value-container { color: var(--text-color); }
+body.dark-mode .output-group.total .value-container { background-color: var(--primary-blue); }
+body.dark-mode .modal-nota-corp { background-color: #2c2c2c; }
+body.dark-mode .nota-corp-body { border-color: #666; }
+body.dark-mode .form-input-corp, body.dark-mode .date-box input, body.dark-mode .total-input { background-color: #333; border-color: #666; color: #fff;}
+body.dark-mode .nota-corp-header, body.dark-mode .nota-corp-detail, body.dark-mode .nota-corp-footer, body.dark-mode .field-group-checkbox { border-color: #666; }
+body.dark-mode .field-group label, body.dark-mode .date-box label, body.dark-mode .nota-corp-header h1, body.dark-mode .field-group-checkbox label, body.dark-mode .totals-group label { color: #fff; }
+body.dark-mode .detail-header { background-color: #444; }
+body.dark-mode .detail-row { border-bottom-color: #555; }
+body.dark-mode .detail-item-input { border-right-color: #666; }
+body.dark-mode .total-input[readonly] { background-color: #444; }
+body.dark-mode .totals-group { background-color: #3a3a3a; }
+body.dark-mode .input-group-prefix span { background-color: #444; border-color: #555; }
+body.dark-mode #facturasTabla tbody tr:nth-child(even) { background-color: var(--medium-gray); }
+body.dark-mode footer { border-top-color: var(--border-color); }
+
+/* --- Interruptor Tema Oscuro --- */
+.theme-switch-wrapper { position: absolute; top: 15px; right: 25px; display: flex; align-items: center; gap: 10px; z-index: 1050; }
+.theme-switch-wrapper span { font-size: 0.8em; color: var(--text-color); }
+.theme-switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 28px; }
+.slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider { background-color: var(--secondary-blue); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+/* --- ESTILOS GENERALES Y DEL FORMULARIO PRINCIPAL --- */
+header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+.logo { max-width: 180px; height: auto; margin-bottom: 15px; }
+h1, h2, h3 { color: var(--primary-blue); }
+h1 { font-size: 2.2em; margin: 0; }
+h2 { font-size: 1.6em; margin-top: 25px; margin-bottom: 20px; border-bottom: 2px solid var(--medium-gray); padding-bottom: 10px; }
+body.dark-mode h1, body.dark-mode h2 { color: var(--secondary-blue); }
+main > section { margin-bottom: 40px; }
+.input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+.input-group label { font-weight: 500; margin-bottom: 8px; color: var(--primary-blue); font-size: 0.95em; }
+.input-section input[type="number"], .input-section input[type="date"], .input-section input[type="text"] { width: 100%; padding: 12px; font-size: 1.1em; box-sizing: border-box; }
+.input-section input { border: 1px solid var(--border-color); border-radius: var(--border-radius); transition: border-color 0.3s, background-color 0.3s; }
+.input-section input:focus { outline: none; border-color: var(--secondary-blue); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+.input-group-prefix { display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: var(--border-radius); transition: border-color 0.3s, background-color 0.3s; }
+.input-group-prefix:focus-within { border-color: var(--secondary-blue); box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); }
+.input-group-prefix span { padding: 12px; font-size: 1.1em; background-color: var(--medium-gray); border-right: 1px solid var(--border-color); color: var(--secondary-color); }
+.input-group-prefix input { border: none !important; box-shadow: none !important; border-radius: 0 var(--border-radius) var(--border-radius) 0; }
+.button-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+
+button {
+    color: var(--white);
+    padding: 10px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    min-width: 120px;
+}
+button:hover {
+    filter: brightness(1.1);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+button:active {
+    transform: translateY(1px);
+    filter: brightness(0.95);
+}
+.action-btn { background-color: var(--primary-blue); }
+.secondary-btn { background-color: var(--secondary-color); }
+.success-btn { background-color: var(--success-color); }
+.danger-btn { background-color: var(--danger-color); }
+
+.delete-factura-btn {
+    min-width: auto;
+    width: 35px;
+    height: 35px;
+    padding: 0;
+    font-size: 1.2em;
+    line-height: 35px;
+    text-align: center;
+}
+
+.footer-action-btn {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 0.9em;
+    padding: 8px 10px;
+    min-width: unset;
+}
+
+.output-grid { display: flex; flex-direction: column; gap: 12px; }
+.output-group { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px dashed var(--border-color); }
+.output-group label { margin-bottom: 0; flex-basis: 60%; }
+.value-container { display: flex; align-items: center; justify-content: flex-end; gap: 10px; text-align: right; flex-basis: 40%; }
+.copy-btn { background: none; border: none; cursor: pointer; opacity: 0.6; padding: 0;}
+.copy-btn svg { width: 20px; height: 20px; fill: var(--text-color); }
+.output-group.total { margin-top: 15px; padding: 10px; border-radius: var(--border-radius); background-color: var(--primary-blue); color: var(--white); }
+.output-group.total label { color: var(--white); }
+.output-group.total .copy-btn svg { fill: var(--white); }
+#facturasTabla { width: 100%; border-collapse: collapse; margin-top: 10px; }
+#facturasTabla th, #facturasTabla td { border: 1px solid var(--border-color); padding: 12px; text-align: right; vertical-align: middle; }
+#facturasTabla th { background-color: var(--primary-blue); color: var(--white); }
+#facturasTabla td:nth-child(2) { text-align: left; }
+#facturasTabla tbody tr:nth-child(even) { background-color: var(--medium-gray); }
+#facturasTabla tfoot td { font-weight: bold; padding: 0; }
+.footer-actions { display: flex; flex-direction: column; gap: 10px; align-items: stretch; border: none !important; padding: 10px; }
+.notification { margin-bottom: 20px; padding: 12px; border-radius: var(--border-radius); text-align: center; display: none; }
+.notification.success { background-color: #d4edda; }
+.notification.error { background-color: #f8d7da; }
+.undo-link { margin-left: 15px; font-weight: bold; text-decoration: underline; cursor: pointer; }
+
+/* --- MODAL CORPORATIVO BORRADOR DE NOTAS --- */
+.modal-backdrop { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; z-index: 1000; align-items: flex-start; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+.modal-content { background-color: var(--white); padding: 25px; border-radius: var(--border-radius); box-shadow: 0 5px 15px rgba(0,0,0,0.3); width: 90%; max-width: 450px; text-align: center; position: relative; margin: auto; }
+.modal-footer { display: flex; justify-content: center; gap: 15px; margin-top: 15px;}
+.modal-nota-corp { max-width: 850px; font-family: Arial, sans-serif; }
+.close-btn-corp { position: absolute; top: 10px; right: 20px; font-size: 2em; font-weight: bold; cursor: pointer; color: #aaa; line-height: 1; }
+.nota-corp-body { border: 2px solid #000; padding: 15px; }
+.nota-corp-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 10px; border-bottom: 2px solid #000; }
+.logo-nota-corp { max-width: 120px; height: auto; }
+.nota-corp-header h1 { font-family: Arial, sans-serif; font-size: 1.5em; margin-top: 10px; font-weight: bold; color: #000; }
+.date-boxes { display: flex; gap: 5px; }
+.date-box { text-align: center; }
+.date-box label { font-size: 0.7em; font-weight: normal; color: #000; margin: 0; }
+.date-box input { width: 40px; border: 1px solid #000; text-align: center; padding: 5px; border-radius: 0; background: var(--white); }
+.nota-corp-grid-top { display: grid; grid-template-columns: repeat(9, 1fr); gap: 10px; padding: 10px 0; align-items: end; }
+.field-group, .field-group-checkbox { display: flex; flex-direction: column; }
+.field-group { padding-bottom: 8px; }
+.field-group.span-3 { grid-column: span 3; }
+.field-group.span-6 { grid-column: span 6; }
+.field-group-checkbox { flex-direction: row; align-items: center; gap: 5px; border: 1px solid #000; padding: 5px 8px; grid-column: span 2; }
+.field-group-checkbox label { margin: 0; font-size: 0.8em; font-weight: bold; color: #000;}
+.field-group-checkbox input[type="radio"] { width: 16px; height: 16px; }
+.field-group label { font-size: 0.7em; font-weight: bold; margin-bottom: 2px; color: #000; }
+.form-input-corp { background-color: transparent; width: 100%; font-size: 1em; border: none; border-bottom: 1px solid #000; padding: 5px 2px; border-radius: 0; }
+.form-input-corp:focus { outline: none; box-shadow: none; border-bottom: 2px solid var(--primary-blue); }
+.nota-corp-detail { border: 2px solid #000; margin-top: 10px; }
+.detail-header { display: grid; grid-template-columns: 1fr 200px; background-color: #e0e0e0; font-weight: bold; font-size: 0.8em; padding: 5px; border-bottom: 2px solid #000; }
+.detail-header span:first-child { padding-left: 5px; }
+.detail-header span:last-child { text-align: center; }
+.detail-body { display: flex; flex-direction: column; }
+.detail-row {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    border-bottom: 1px dashed #ccc;
+    align-items: center;
+}
+.detail-body > .detail-row:last-of-type { border-bottom: none; }
+.detail-item-input, .valor-wrapper { padding-top: 2px; padding-bottom: 2px; }
+.detail-item-input {
+    border: none; border-radius: 0; box-shadow: none;
+    line-height: 1.3; font-size: 1em; font-family: Arial, sans-serif;
+    background-color: transparent; border-right: 2px solid #000;
+    width: 100%; box-sizing: border-box; padding-left: 8px; height: 100%;
+}
+.valor-wrapper {
+    display: flex; justify-content: flex-end; align-items: center;
+    padding-right: 20px;
+}
+.valor-input {
+    border: none; border-radius: 0; box-shadow: none;
+    padding: 0 5px; line-height: 1.3; font-size: 1em;
+    font-family: Arial, sans-serif; background-color: transparent;
+    text-align: right; width: 100%;
+}
+.nota-corp-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; align-items: end; }
+.totals-group { border: 2px solid #000; padding: 5px; font-size: 0.9em; }
+.total-row { display: flex; justify-content: space-between; align-items: center; margin: 2px 0; }
+.total-row label { margin: 0; font-size: 0.9em; }
+.total-input { width: 120px; text-align: right; font-weight: bold; border: none; border-bottom: 1px solid #000; border-radius: 0; }
+.total-input[readonly] { background-color: #f0f0f0; color: #555; }
+.total-row.total-final { border-top: 2px solid #000; font-weight: bold; padding-top: 2px; margin-top: 2px; }
+.modal-footer-corp { display: flex; justify-content: center; margin-top: 20px; }
+footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+.print-only { display: none; }
+
+/* CAMBIO CLAVE: Estilos Responsivos solo para PANTALLA, no para impresión */
+@media screen and (max-width: 768px) {
+    body { padding: 10px; }
+    .container { padding: 15px; margin-top: 20px; }
+    h1 { font-size: 1.8em; }
+    h2 { font-size: 1.4em; }
+
+    .output-grid .output-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    .output-grid .value-container {
+        width: 100%;
+        justify-content: flex-start;
+        text-align: left;
+    }
+    
+    #facturasTabla thead { display: none; }
+    #facturasTabla, #facturasTabla tbody, #facturasTabla tr, #facturasTabla td {
+        display: block;
+        width: 100%;
+    }
+    #facturasTabla tr {
+        margin-bottom: 15px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--border-radius);
+        padding: 10px;
+    }
+    #facturasTabla td {
+        text-align: right !important;
+        padding-left: 50%;
+        position: relative;
+        border: none;
+        border-bottom: 1px dashed var(--border-color);
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+    #facturasTabla td:last-child { border-bottom: none; }
+    #facturasTabla td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        width: 45%;
+        padding-right: 10px;
+        text-align: left;
+        font-weight: bold;
+    }
+    #facturasTabla td:nth-of-type(1)::before { content: "#"; }
+    #facturasTabla td:nth-of-type(2)::before { content: "ID Factura"; }
+    #facturasTabla td:nth-of-type(3)::before { content: "Valor Total"; }
+    #facturasTabla td:nth-of-type(4)::before { content: "Días PP"; }
+    #facturasTabla td:nth-of-type(5)::before { content: "% Desc."; }
+    #facturasTabla td:nth-of-type(6)::before { content: "Valor Desc."; }
+    #facturasTabla td:nth-of-type(7)::before { content: "Total a Pagar"; }
+    #facturasTabla td:nth-of-type(8)::before { content: "Acción"; }
+    #facturasTabla td:nth-of-type(8) { display: flex; justify-content: flex-end; }
+    #facturasTabla tfoot td { display: block; width: 100%; }
+    .total-cell, .footer-actions { padding: 10px !important; }
+
+    .nota-corp-grid-top, .nota-corp-footer { grid-template-columns: 1fr; }
+    .modal-nota-corp { padding: 10px; }
+    .nota-corp-body { padding: 10px; }
+    .detail-header { display: none; }
+    .detail-row {
+        grid-template-columns: 1fr;
+        border: none;
+    }
+    .detail-item-input {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+    .valor-wrapper {
+        padding: 8px 0;
+        justify-content: flex-start;
+    }
+    .valor-input {
+        text-align: left;
+        padding-left: 0;
+    }
+}
+
+/* --- ESTILOS DE IMPRESIÓN --- */
+@media print {
+    body, html { background-color: #fff !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    
+    .theme-switch-wrapper, .notification, .modal-footer-corp, .close-btn-corp,
+    body > .container > header, main, body > .container > footer, .undo-container, .modal-backdrop:not(.modal-nota-corp) {
+        display: none !important;
+    }
+    body.printing-area > *:not(#print-area) { display: none !important; }
+    #print-area { display: block !important; }
+    body.printing-nota > *:not(#borradorNotasModal) { display: none !important; }
+    body.printing-nota #borradorNotasModal {
+        display: block !important; position: static !important;
+        overflow: visible !important; background: none !important;
+        padding: 0 !important; margin: 0 !important; height: auto !important;
+    }
+    body.printing-nota .modal-nota-corp {
+        max-width: 100% !important; width: 100% !important;
+        box-shadow: none !important; padding: 0 !important;
+        font-family: Arial, sans-serif !important;
+    }
+    .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 1em; margin-bottom: 2em; }
+    .print-header img { max-width: 150px; }
+    .print-header h2 { font-size: 1.5em; margin: 0; color: #000 !important; }
+    .print-results-grid { font-size: 1em; width: 100%; max-width: 600px; margin: 2em auto; }
+    .print-results-grid .print-output-group { display: flex; justify-content: space-between; padding: 10px 5px; border-bottom: 1px solid #eee; }
+    .print-results-grid .print-output-group .label { text-align: left; }
+    .print-results-grid .print-output-group .value { text-align: right; font-weight: bold; }
+    .print-results-grid .print-output-group.total { margin-top: 15px; border: 2px solid #000; padding: 12px; font-size: 1.2em; background-color: #f2f2f2 !important; }
+    
+    .print-table { width: 100%; border-collapse: collapse; font-size: 0.9em; }
+    .print-table th, .print-table td { border: 1px solid #ccc; padding: 8px; text-align: right; }
+    .print-table th { background-color: #f2f2f2 !important; color: #000 !important; font-weight: bold; }
+
+    .nota-corp-body { border: 2px solid #000 !important; }
+    h1, label { color: #000 !important; }
+    .form-input-corp, .date-box input, .total-input, .detail-item-input, .valor-input { background: transparent !important; color: #000 !important; border-color: #000 !important; }
+    .detail-row { border-bottom-color: #ccc !important; }
+    .detail-item-input { border-right-color: #000 !important; }
+    .field-group-checkbox input[type="radio"] { border-color: #000 !important; }
+}
