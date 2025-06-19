@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Descuentos Pronto Pago - ASHE S.A.S</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> 
+    <link rel="stylesheet" href="style.css">
+    <!-- CÓDIGO PARA PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#004D7A">
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="theme-checkbox">
+            <input type="checkbox" id="theme-checkbox" />
+            <div class="slider round"></div>
+        </label>
+        <span>Modo Oscuro</span>
+    </div>
+    <div class="container">
+        <header>
+            <img src="LOGO ASHE SIN FONDO.png" alt="Logo ASHE SAS" class="logo">
+            <h1>Calculadora de Descuentos Pronto Pago</h1>
+        </header>
+
+        <div id="notification-bar" class="notification"></div>
+        
+        <main>
+            <!-- ... todo el contenido de tu main sigue aquí ... -->
+            <section class="input-section">
+                <h2>Datos para Liquidación</h2>
+                <div class="input-group">
+                    <label for="facturaIdNumber">ID de Factura:</label>
+                    <div class="input-group-prefix">
+                        <span>MDVA-</span>
+                        <input type="text" id="facturaIdNumber" placeholder="12345" autocomplete="off">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="valorFacturaTotal">Valor Total de la Factura (con IVA incluido):</label>
+                    <input type="number" id="valorFacturaTotal" placeholder="Ej: 26604503" step="0.01" required>
+                </div>
+                <div class="input-group">
+                    <label for="valorSinIvaDirecto">Parte de la Factura sin IVA (Si no aplica, dejar en blanco o 0):</label>
+                    <input type="number" id="valorSinIvaDirecto" placeholder="Ingrese 0 si no aplica" step="0.01">
+                </div>
+                <div class="input-group">
+                    <label for="fechaFactura">Fecha de Emisión de Factura:</label>
+                    <input type="date" id="fechaFactura" required>
+                </div>
+                <div class="input-group">
+                    <label for="fechaPago">Fecha de Pago (o Fecha Actual):</label>
+                    <input type="date" id="fechaPago" required>
+                </div>
+                <div class="input-group">
+                    <label for="diasManual">Días de Pronto Pago (Calculado):</label>
+                    <input type="number" id="diasManual" placeholder="Se calcula automáticamente" readonly>
+                </div>
+                <div class="button-group">
+                    <button id="calcularBtn" class="action-btn">Calcular Descuento</button>
+                    <button id="addToListBtn" class="success-btn" style="display: none;">Agregar a la Lista</button>
+                    <button id="printBtn" class="secondary-btn" style="display: none;">Imprimir Comprobante</button>
+                    <button id="generarNotaBtn" class="success-btn" style="display: none;">Generar Nota de Crédito</button>
+                    <button id="limpiarBtn" class="secondary-btn">Limpiar Formulario</button>
+                </div>
+            </section>
+
+            <section class="results-section">
+                <h2>Resultados del Cálculo</h2>
+                <div class="output-grid">
+                    <div class="output-group">
+                        <label>Días Transcurridos:</label>
+                        <div class="value-container"><span id="diasTranscurridosOutput">0 días</span></div>
+                    </div>
+                    <div class="output-group">
+                        <label>Valor Base de Factura para Descuento (sin IVA):</label>
+                        <div class="value-container"><span id="valorBaseDescuentoOutput">$ 0</span></div>
+                    </div>
+                    <div class="output-group">
+                        <label>Valor de Productos con IVA (Calculado, incluido en total):</label>
+                        <div class="value-container"><span id="valorConIvaOutput">$ 0</span></div>
+                    </div>
+                    <div class="output-group">
+                        <label>IVA Calculado (19%):</label>
+                        <div class="value-container"><span id="ivaCalculadoOutput">$ 0</span></div>
+                    </div>
+                    <div class="output-group">
+                        <label>Porcentaje Descuento Aplicado:</label>
+                        <div class="value-container"><span id="porcentajeDescuentoOutput">0.00%</span></div>
+                    </div>
+                    <div class="output-group">
+                        <label>Valor del Descuento:</label>
+                        <div class="value-container with-copy">
+                            <span id="valorDescuentoOutput">$ 0</span>
+                            <button class="copy-btn" data-target="valorDescuentoOutput" title="Copiar valor">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="output-group total">
+                        <label>Total a Pagar (Final):</label>
+                        <div class="value-container with-copy">
+                            <span id="totalPagarOutput">$ 0</span>
+                            <button class="copy-btn" data-target="totalPagarOutput" title="Copiar valor">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            <section class="facturas-lista-section">
+                <h2>Facturas Liquidadas en Sesión</h2>
+                <div id="undo-container" class="notification" style="display: none;">
+                    <span id="undo-text"></span>
+                    <span id="undo-btn" class="undo-link">Deshacer</span>
+                </div>
+                <div id="facturasListaContainer">
+                    <table id="facturasTabla">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ID Factura</th>
+                                <th>Valor Total</th>
+                                <th>Días PP</th>
+                                <th>% Desc.</th>
+                                <th>Valor Desc.</th>
+                                <th>Total a Pagar</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           <!-- Las filas se insertan aquí con JS -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6"><strong>GRAN TOTAL A PAGAR:</strong></td>
+                                <td class="total-cell">
+                                    <div class="with-copy">
+                                        <span id="granTotalPagarSpan">$ 0</span>
+                                        <button class="copy-btn" data-target="granTotalPagarSpan" title="Copiar valor">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                                        </button>
+                                    </div>
+                                </td>
+                                <td class="footer-actions">
+                                    <button id="printSummaryBtn" class="footer-action-btn action-btn">Imprimir Resumen</button>
+                                    <button id="exportCsvBtn" class="footer-action-btn secondary-btn">Exportar CSV</button>
+                                    <button id="limpiarListaBtn" class="footer-action-btn danger-btn">Limpiar Todo</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <div id="noFacturasContainer" style="display: none;">
+                        <p id="noFacturasMessage" style="text-align: center; padding: 20px; border: 1px dashed var(--border-color); margin-top: 10px;">Aún no se han agregado facturas a la lista.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer><p>Copyright © <span id="copyright-year">2025</span> Mauricio Luftman Para ASHE S.A.S. Todos los derechos reservados.</p></footer>
+    </div>
+    
+    <!-- ... todo el resto de tu HTML con los modales sigue aquí ... -->
+    <div id="borradorNotasModal" class="modal-backdrop" style="display: none;">
+        <!-- ... contenido del modal ... -->
+    </div>
+    <div id="confirmDeleteModal" class="modal-backdrop" style="display: none;">
+        <!-- ... contenido del modal ... -->
+    </div>
+    <div id="confirmClearModal" class="modal-backdrop" style="display: none;">
+        <!-- ... contenido del modal ... -->
+    </div>
+    <div id="print-area" class="print-only"></div>
+
+    <script src="script.js"></script>
+    <!-- CÓDIGO PARA PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => console.log('Service Worker registrado con éxito:', registration))
+                    .catch(err => console.log('Error en registro de Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+</html>
