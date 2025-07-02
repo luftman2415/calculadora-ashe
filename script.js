@@ -78,13 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // CAMBIO: Añadido scroll hacia arriba para ver la notificación
     function showNotification(msg, type = 'info') {
         clearTimeout(notificationTimeout);
         notificationBar.textContent = msg;
         notificationBar.className = `notification ${type}`;
         notificationBar.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // Desplaza la vista al tope
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         notificationTimeout = setTimeout(() => notificationBar.style.display = 'none', 3000);
     }
     
@@ -141,10 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
         facturasTablaBody.innerHTML = '';
         let granTotal = 0;
         const hayFacturas = facturasCalculadas.length > 0;
-
         facturasTabla.style.display = hayFacturas ? 'table' : 'none';
         document.getElementById('noFacturasContainer').style.display = hayFacturas ? 'none' : 'block';
-        
         printSummaryBtn.style.display = hayFacturas ? 'inline-block' : 'none';
         exportCsvBtn.style.display = hayFacturas ? 'inline-block' : 'none';
         limpiarListaBtn.style.display = hayFacturas ? 'inline-block' : 'none';
@@ -158,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${formatCurrency(factura.valorFacturaTotal)}</td>
                     <td>${factura.diasTranscurridos}</td>
                     <td>${factura.porcentajeDescuentoAplicado.toFixed(2)}%</td>
-                    <td>${formatCurrency(factura.valorDescuento)}</td>
+                    <td>${formatCurrency(factura.valorDescuento + factura.ivaDelDescuento)}</td>
                     <td><strong>${formatCurrency(factura.totalPagar)}</strong></td>
                     <td><button class="delete-factura-btn danger-btn" data-index="${index}">X</button></td>
                 `;
@@ -170,74 +167,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function prepareAndPrint(title, contentHtml) {
-        const printDate = new Date().toLocaleDateString('es-CO', {
-            year: 'numeric', month: 'long', day: 'numeric'
-        });
-
+        const printDate = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
         printArea.innerHTML = `
             <div class="print-header">
                 <img src="LOGO ASHE SIN FONDO.png" alt="Logo ASHE SAS">
-                <div class="title-date-group">
-                    <h2>${title}</h2>
-                    <p>Generado el: ${printDate}</p>
-                </div>
+                <div class="title-date-group"><h2>${title}</h2><p>Generado el: ${printDate}</p></div>
             </div>
-            ${contentHtml}
-        `;
+            ${contentHtml}`;
         body.classList.add('printing-area');
         window.print();
         body.classList.remove('printing-area');
     }
 
-    // --- Lógica de Eventos ---
-    
     calcularBtn.addEventListener('click', () => {
-        // Validación de campos
-        if (!valorFacturaTotalInput.value) {
-            return showNotification('El campo "Valor Total de la Factura" es obligatorio.', 'error');
-        }
-        if (!fechaFacturaInput.value) {
-            return showNotification('El campo "Fecha de Emisión de Factura" es obligatorio.', 'error');
-        }
-        if (!fechaPagoInput.value) {
-            return showNotification('El campo "Fecha de Pago" es obligatorio.', 'error');
-        }
+        if (!valorFacturaTotalInput.value) return showNotification('El campo "Valor Total de la Factura" es obligatorio.', 'error');
+        if (!fechaFacturaInput.value) return showNotification('El campo "Fecha de Emisión de Factura" es obligatorio.', 'error');
+        if (!fechaPagoInput.value) return showNotification('El campo "Fecha de Pago" es obligatorio.', 'error');
 
         const valorFacturaTotal = parseFloat(valorFacturaTotalInput.value);
-        if (isNaN(valorFacturaTotal) || valorFacturaTotal <= 0) {
-            return showNotification('Ingresa un Valor Total de Factura válido y mayor a cero.', 'error');
-        }
+        if (isNaN(valorFacturaTotal) || valorFacturaTotal <= 0) return showNotification('Ingresa un Valor Total de Factura válido y mayor a cero.', 'error');
         
         const fechaFactura = new Date(fechaFacturaInput.value);
         const fechaPago = new Date(fechaPagoInput.value);
-        
         fechaFactura.setUTCHours(0, 0, 0, 0);
         fechaPago.setUTCHours(0, 0, 0, 0);
 
-        if (fechaPago < fechaFactura) {
-            return showNotification('La fecha de pago no puede ser anterior a la fecha de emisión.', 'error');
-        }
+        if (fechaPago < fechaFactura) return showNotification('La fecha de pago no puede ser anterior a la fecha de emisión.', 'error');
         
         const diasTranscurridos = Math.round((fechaPago - fechaFactura) / (1000 * 60 * 60 * 24)) + 1;
-
-        // CAMBIO: El campo sin IVA ahora puede estar vacío y se interpretará como 0
         const valorSinIvaDirecto = parseFloat(valorSinIvaDirectoInput.value) || 0;
-        if (valorSinIvaDirecto < 0) {
-             return showNotification('El valor sin IVA no puede ser negativo.', 'error');
-        }
-        if (valorSinIvaDirecto > valorFacturaTotal) {
-            return showNotification('La parte sin IVA no puede ser mayor al total de la factura.', 'error');
-        }
+        if (valorSinIvaDirecto < 0) return showNotification('El valor sin IVA no puede ser negativo.', 'error');
+        if (valorSinIvaDirecto > valorFacturaTotal) return showNotification('La parte sin IVA no puede ser mayor al total de la factura.', 'error');
         
         const valorParteConIvaBruto = valorFacturaTotal - valorSinIvaDirecto;
         const baseImponibleParteConIva = valorParteConIvaBruto / (1 + IVA_PERCENTAGE);
-        const valorBaseDescuentoTotal = valorSinIvaDirecto + baseImponibleParteConIva;
-        const ivaCalculado = valorParteConIvaBruto - baseImponibleParteConIva;
-        
         const descuentoEncontrado = tablaDescuentos.find(d => d.dias === diasTranscurridos);
         const porcentajeDescuentoAplicado = descuentoEncontrado ? descuentoEncontrado.porcentaje : 0;
+        
+        const descuentoSobreBaseConIva = baseImponibleParteConIva * (porcentajeDescuentoAplicado / 100);
+        const ivaDelDescuento = descuentoSobreBaseConIva * IVA_PERCENTAGE;
+
+        const valorBaseDescuentoTotal = valorSinIvaDirecto + baseImponibleParteConIva;
         const valorDescuento = valorBaseDescuentoTotal * (porcentajeDescuentoAplicado / 100);
-        const totalPagar = valorFacturaTotal - valorDescuento;
+        const totalFinalDescuento = valorDescuento + ivaDelDescuento;
+        const totalPagar = valorFacturaTotal - totalFinalDescuento;
 
         currentCalculation = {
             id: facturaIdNumberInput.value.trim() ? `MDVA-${facturaIdNumberInput.value.trim()}` : 'N/A',
@@ -245,18 +218,16 @@ document.addEventListener('DOMContentLoaded', () => {
             diasTranscurridos,
             porcentajeDescuentoAplicado,
             valorDescuento,
-            totalPagar,
-            valorBaseDescuento: valorBaseDescuentoTotal,
-            ivaCalculado: ivaCalculado
+            ivaDelDescuento,
+            totalPagar
         };
 
-        diasManualInput.value = diasTranscurridos;
         diasTranscurridosOutput.textContent = `${diasTranscurridos} días`;
         valorBaseDescuentoOutput.textContent = formatCurrency(valorBaseDescuentoTotal);
         valorConIvaOutput.textContent = formatCurrency(valorParteConIvaBruto);
-        ivaCalculadoOutput.textContent = formatCurrency(ivaCalculado);
+        ivaCalculadoOutput.textContent = formatCurrency(valorParteConIvaBruto - baseImponibleParteConIva);
         porcentajeDescuentoOutput.textContent = `${porcentajeDescuentoAplicado.toFixed(2)}%`;
-        valorDescuentoOutput.textContent = formatCurrency(valorDescuento);
+        valorDescuentoOutput.textContent = formatCurrency(totalFinalDescuento);
         totalPagarOutput.textContent = formatCurrency(totalPagar);
         
         addToListBtn.style.display = 'inline-block';
@@ -279,12 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const label = group.querySelector('label').textContent;
             const value = group.querySelector('.value-container span').textContent;
             const isTotal = group.classList.contains('total');
-            resultsHtml += `
-                <div class="print-output-group ${isTotal ? 'total' : ''}">
-                    <span class="label">${label}</span>
-                    <span class="value">${value}</span>
-                </div>
-            `;
+            resultsHtml += `<div class="print-output-group ${isTotal ? 'total' : ''}"><span class="label">${label}</span><span class="value">${value}</span></div>`;
         });
         resultsHtml += '</div>';
         prepareAndPrint('Comprobante de Cálculo', resultsHtml);
@@ -294,31 +260,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const tableToPrint = facturasTabla.cloneNode(true);
         tableToPrint.querySelector('thead tr').deleteCell(-1);
         tableToPrint.querySelectorAll('tbody tr').forEach(row => row.deleteCell(-1));
-        
         const tfoot = tableToPrint.querySelector('tfoot');
         if (tfoot) {
             const footerActionsCell = tfoot.querySelector('.footer-actions');
             if (footerActionsCell) footerActionsCell.remove();
             const totalCell = tfoot.querySelector('.total-cell');
             if (totalCell) {
-                 totalCell.querySelector('.copy-btn')?.remove();
-                 totalCell.colSpan = "1";
+                totalCell.querySelector('.copy-btn')?.remove();
+                totalCell.colSpan = "1";
             }
         }
         tableToPrint.className = 'print-table';
         prepareAndPrint('Resumen de Facturas Liquidadas', tableToPrint.outerHTML);
     });
-
-    function recalcularNotaTotals() {
+    
+    function recalcularNotaSubtotal() {
         let subtotal = 0;
-        document.querySelectorAll('.valor-input').forEach(input => {
+        notaValorInputs.forEach(input => {
             subtotal += parseFormattedCurrency(input.value);
         });
-        const iva = subtotal * IVA_PERCENTAGE; 
-        const total = subtotal + iva;
         notaSubtotalInput.value = formatCurrency(subtotal);
-        notaIvaInput.value = formatCurrency(iva);
-        notaTotalInput.value = formatCurrency(total);
+        recalcularNotaTotalFinal();
+    }
+
+    function recalcularNotaTotalFinal() {
+        const subtotal = parseFormattedCurrency(notaSubtotalInput.value);
+        const iva = parseFormattedCurrency(notaIvaInput.value);
+        notaTotalInput.value = formatCurrency(subtotal + iva);
     }
 
     generarNotaBtn.addEventListener('click', () => {
@@ -332,11 +300,16 @@ document.addEventListener('DOMContentLoaded', () => {
         notaValorInputs.forEach(input => input.value = '');
         const primerDetalleInput = document.querySelector('.detail-item-input');
         if (primerDetalleInput) primerDetalleInput.value = `Descuento por pronto pago factura MDVA-${facturaId}`;
+        
+        notaSubtotalInput.value = formatCurrency(currentCalculation.valorDescuento);
+        notaIvaInput.value = formatCurrency(currentCalculation.ivaDelDescuento);
+        
         const primerValorInput = document.querySelector('.valor-input');
-        if (primerValorInput && currentCalculation.valorDescuento) primerValorInput.value = formatCurrency(currentCalculation.valorDescuento);
+        if (primerValorInput) primerValorInput.value = formatCurrency(currentCalculation.valorDescuento);
+        
         ['notaAgencia', 'notaCliente', 'notaRepVentas', 'notaNit', 'notaDireccion', 'notaCiudad', 'notaElaborado', 'notaAutorizado'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('notaCreditoRadio').checked = true;
-        recalcularNotaTotals();
+        recalcularNotaTotalFinal();
         toggleModal(borradorNotasModal, true);
     });
 
@@ -348,10 +321,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     notaValorInputs.forEach(input => {
+        input.addEventListener('input', recalcularNotaSubtotal);
         input.addEventListener('blur', (e) => {
             const rawValue = parseFormattedCurrency(e.target.value);
             e.target.value = rawValue > 0 ? formatCurrency(rawValue) : '';
-            recalcularNotaTotals();
         });
         input.addEventListener('focus', (e) => {
             const rawValue = parseFormattedCurrency(e.target.value);
@@ -359,6 +332,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    notaIvaInput.addEventListener('input', recalcularNotaTotalFinal);
+    notaIvaInput.addEventListener('blur', (e) => {
+        const rawValue = parseFormattedCurrency(e.target.value);
+        e.target.value = rawValue > 0 ? formatCurrency(rawValue) : '';
+    });
+    notaIvaInput.addEventListener('focus', (e) => {
+        const rawValue = parseFormattedCurrency(e.target.value);
+        e.target.value = rawValue > 0 ? rawValue : '';
+    });
+    
     borradorNotasModal.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -435,11 +418,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let csvContent = headers.join(",") + "\n";
         
         facturasCalculadas.forEach((factura, index) => {
-            const row = [
-                index + 1, factura.id || "N/A", factura.valorFacturaTotal, factura.diasTranscurridos,
-                factura.porcentajeDescuentoAplicado.toFixed(2), factura.valorDescuento, factura.totalPagar
+            const rowData = [
+                index + 1,
+                factura.id || "N/A",
+                factura.valorFacturaTotal,
+                factura.diasTranscurridos,
+                factura.porcentajeDescuentoAplicado.toFixed(2),
+                factura.valorDescuento + factura.ivaDelDescuento,
+                factura.totalPagar
             ].map(escapeCsvField);
-            csvContent += row.join(",") + "\n";
+            csvContent += rowData.join(",") + "\n";
         });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -461,10 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTheme(localStorage.getItem('theme') || 'light');
     resetFields();
     renderFacturasLista();
-
-    // CAMBIO: Actualización dinámica del año del copyright
+    
     const yearSpan = document.getElementById('copyright-year');
-    if (yearSpan) {
-        yearSpan.textContent = new Date().getFullYear();
-    }
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 });

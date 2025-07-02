@@ -4,17 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manual de Usuario - Calculadora de Descuentos ASHE S.A.S</title>
-    <!-- === INICIO: CÓDIGO DE ICONOS NUEVOS === -->
-<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="manifest" href="site.webmanifest">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
-<!-- === FIN: CÓDIGO DE ICONOS NUEVOS === -->
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -69,8 +67,8 @@
             font-family: "Courier New", Courier, monospace;
         }
         .note {
-            background-color: #fffbe6;
-            border-left: 5px solid #ffc107;
+            background-color: #e6f7ff;
+            border-left: 5px solid #007BFF;
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
@@ -124,10 +122,6 @@
                     <h3>Parte de la Factura sin IVA</h3>
                     <p>Este es el campo más importante para un cálculo preciso. Dependiendo del tipo de factura, sigue una de estas tres reglas:</p>
                     
-                    <div class="note">
-                        <strong>Regla de Oro:</strong> Si todos los productos de la factura están gravados con IVA, puedes <strong>dejar este campo en blanco</strong>. El sistema lo interpretará automáticamente como 0.
-                    </div>
-
                     <ul>
                         <li><strong>A) Factura 100% con IVA:</strong><br>
                         Deja el campo en blanco o ingresa <code>0</code>.</li>
@@ -142,7 +136,7 @@
                 </li>
                 <li>
                     <h3>Fechas</h3>
-                    <p>Selecciona la <strong>Fecha de Emisión</strong> y la <strong>Fecha de Pago</strong>. Ambos campos son obligatorios. La fecha de pago no puede ser anterior a la de emisión.</p>
+                    <p>Selecciona la <strong>Fecha de Emisión</strong> y la <strong>Fecha de Pago</strong>. Ambos campos son obligatorios.</p>
                 </li>
                 <li>
                     <h3>Calcular</h3>
@@ -152,11 +146,31 @@
         </section>
 
         <section>
-            <h2>3. Manejo de la Lista de Facturas</h2>
+            <h2>3. Generador de Borrador de Notas (Cálculo de IVA Automático)</h2>
+            <div class="note">
+                <strong>Importante:</strong> La calculadora ahora determina automáticamente si el descuento debe llevar IVA y calcula el monto exacto. <strong>No es necesario hacer ajustes manuales.</strong>
+            </div>
+            <ul>
+                <li><strong>Abrir el Borrador:</strong> Después de un cálculo, haz clic en <strong><code>Generar Nota de Crédito</code></strong>.</li>
+                <li>
+                    <strong>Datos Automáticos y Precisos:</strong> El formulario se abrirá con:
+                    <ul>
+                        <li>El <strong>Subtotal</strong> (valor del descuento antes de IVA).</li>
+                        <li>El <strong>IVA del descuento</strong> (será `$ 0` si el descuento es sobre productos exentos).</li>
+                        <li>El <strong>Total</strong> de la nota.</li>
+                    </ul>
+                </li>
+                <li><strong>Navegación por Teclado:</strong> Puedes usar la tecla <strong><code>Enter</code></strong> para saltar cómodamente de un campo al siguiente.</li>
+                <li><strong>Imprimir Nota:</strong> Usa el botón <strong><code>Imprimir Nota</code></strong> para generar el documento.</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. Manejo de la Lista de Facturas</h2>
             <p>Una vez que agregas un cálculo, aparecerá en la sección "Facturas Liquidadas en Sesión".</p>
             <ul>
                 <li><strong>Eliminar una Factura:</strong> Haz clic en el botón rojo <strong><code>X</code></strong> al final de una fila.</li>
-                <li><strong>Deshacer Eliminación:</strong> Inmediatamente después de eliminar, aparecerá una notificación con un enlace "Deshacer" por 6 segundos.</li>
+                <li><strong>Deshacer Eliminación:</strong> Inmediatamente después, aparecerá una notificación con un enlace "Deshacer" por 6 segundos.</li>
                 <li><strong>Acciones de la Lista:</strong> Cuando hay facturas en la lista, los siguientes botones estarán activos al final de la tabla:
                     <ul>
                         <li><strong><code>Imprimir Resumen</code>:</strong> Genera un documento imprimible con la tabla completa.</li>
@@ -166,28 +180,18 @@
                 </li>
             </ul>
         </section>
-
-        <section>
-            <h2>4. Generador de Borrador de Notas</h2>
-            <ul>
-                <li><strong>Abrir el Borrador:</strong> Después de un cálculo, haz clic en <strong><code>Generar Nota de Crédito</code></strong>.</li>
-                <li><strong>Datos Automáticos:</strong> El formulario se abrirá con la fecha, el número de factura y el valor del descuento ya ingresados.</li>
-                <li><strong>Navegación por Teclado:</strong> Puedes usar la tecla <strong><code>Enter</code></strong> para saltar cómodamente de un campo al siguiente.</li>
-                <li><strong>Imprimir Nota:</strong> Usa el botón <strong><code>Imprimir Nota</code></strong> para generar el documento con el formato corporativo.</li>
-            </ul>
-        </section>
-
+        
         <section>
             <h2>5. Funciones Adicionales</h2>
             <ul>
                 <li><strong>Modo Oscuro:</strong> Activa o desactiva el tema oscuro usando el interruptor en la esquina superior derecha.</li>
-                <li><strong>Copiar Valores:</strong> Junto a los resultados importantes (Valor del Descuento, Total a Pagar, etc.), hay un icono para copiar el valor numérico al portapapeles.</li>
-                <li><strong>Diseño Adaptable:</strong> La aplicación ajusta su diseño para funcionar correctamente tanto en ordenadores de escritorio como en dispositivos móviles.</li>
+                <li><strong>Copiar Valores:</strong> Junto a los resultados importantes, hay un icono para copiar el valor numérico al portapapeles.</li>
+                <li><strong>Diseño Adaptable:</strong> La aplicación ajusta su diseño para funcionar correctamente en ordenadores y móviles.</li>
             </ul>
         </section>
 
         <footer>
-            <p>Versión 2.1 - Manual actualizado el 19 de Junio de 2025 / Mauricio Luftman</p>
+            <p>Versión 2.2 - Manual actualizado el 19 de Junio de 2025 / Mauricio Luftman</p>
         </footer>
     </div>
 </body>

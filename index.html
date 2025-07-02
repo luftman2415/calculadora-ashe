@@ -4,18 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Descuentos Pronto Pago - ASHE S.A.S</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
     <link rel="stylesheet" href="style.css">
-    <!-- === INICIO: CÓDIGO DE ICONOS NUEVOS === -->
-<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
-<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="manifest" href="site.webmanifest">
-<meta name="msapplication-TileColor" content="#ffffff">
-<meta name="msapplication-TileImage" content="ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
-<!-- === FIN: CÓDIGO DE ICONOS NUEVOS === -->
 </head>
 <body>
     <div class="theme-switch-wrapper">
@@ -164,18 +162,13 @@
                 </div>
             </section>
         </main>
-        <!-- CAMBIO: Año del copyright dinámico -->
         <footer>
-    <p>Copyright © <span id="copyright-year"></span> Mauricio Luftman Para ASHE S.A.S. Todos los derechos reservados.</p>
-    
-    <!-- ENLACE AL MANUAL AÑADIDO AQUÍ -->
-    <p style="margin-top: 10px;">
-        <a href="manual.html" target="_blank" style="color: var(--secondary-blue); text-decoration: none;">Ver Manual de Usuario</a>
-    </p>
-</footer>
+            <p>Copyright © <span id="copyright-year"></span> Mauricio Luftman Para ASHE S.A.S. Todos los derechos reservados.</p>
+            <p style="margin-top: 10px;">
+                <a href="manual.html" target="_blank" style="color: var(--secondary-blue); text-decoration: none;">Ver Manual de Usuario</a>
+            </p>
+        </footer>
     </div>
-
-    <!-- ... (El resto del HTML, modales, etc., permanece igual) ... -->
     
     <!-- MODAL BORRADOR DE NOTAS CORPORATIVO -->
     <div id="borradorNotasModal" class="modal-backdrop" style="display: none;">
@@ -294,7 +287,7 @@
                         </div>
                          <div class="total-row">
                             <label>(+) Iva</label>
-                            <input type="text" id="notaIvaInput" class="form-input-corp total-input" readonly>
+                            <input type="text" id="notaIvaInput" class="form-input-corp total-input">
                         </div>
                          <div class="total-row total-final">
                             <label>Total</label>
