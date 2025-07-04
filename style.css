@@ -52,6 +52,7 @@ body.dark-mode .totals-group { background-color: #3a3a3a; }
 body.dark-mode .input-group-prefix span { background-color: #444; border-color: #555; }
 body.dark-mode #facturasTabla tbody tr:nth-child(even) { background-color: var(--medium-gray); }
 body.dark-mode footer { border-top-color: var(--border-color); }
+body.dark-mode .nota-corp-payment-info { border-color: #666; }
 
 /* --- Interruptor Tema Oscuro --- */
 .theme-switch-wrapper { position: absolute; top: 15px; right: 25px; display: flex; align-items: center; gap: 10px; z-index: 1050; }
@@ -65,7 +66,12 @@ input:checked + .slider:before { transform: translateX(22px); }
 
 /* --- ESTILOS GENERALES Y DEL FORMULARIO PRINCIPAL --- */
 header { text-align: center; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
-.logo { max-width: 180px; height: auto; margin-bottom: 15px; }
+.logo { 
+    max-width: 180px; 
+    height: 120px; /* Damos una altura fija */
+    object-fit: contain; /* Esto asegura que el logo no se deforme */
+    margin-bottom: 15px; 
+}
 h1, h2, h3 { color: var(--primary-blue); }
 h1 { font-size: 2.2em; margin: 0; }
 h2 { font-size: 1.6em; margin-top: 25px; margin-bottom: 20px; border-bottom: 2px solid var(--medium-gray); padding-bottom: 10px; }
@@ -153,7 +159,7 @@ button:active {
 .close-btn-corp { position: absolute; top: 10px; right: 20px; font-size: 2em; font-weight: bold; cursor: pointer; color: #aaa; line-height: 1; }
 .nota-corp-body { border: 2px solid #000; padding: 15px; }
 .nota-corp-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 10px; border-bottom: 2px solid #000; }
-.logo-nota-corp { max-width: 120px; height: auto; }
+.logo-nota-corp { max-width: 120px; height: auto; object-fit: contain; }
 .nota-corp-header h1 { font-family: Arial, sans-serif; font-size: 1.5em; margin-top: 10px; font-weight: bold; color: #000; }
 .date-boxes { display: flex; gap: 5px; }
 .date-box { text-align: center; }
@@ -199,6 +205,31 @@ button:active {
     font-family: Arial, sans-serif; background-color: transparent;
     text-align: right; width: 100%;
 }
+
+/* CAMBIO: Estilos corregidos para la nota de pago */
+.nota-corp-payment-info {
+    display: flex;
+    align-items: center; /* Alinea verticalmente */
+    gap: 5px;
+    flex-wrap: nowrap; /* Evita que se rompa la línea */
+    margin-top: 20px;
+    padding: 10px 5px;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.9em;
+}
+.payment-label {
+    white-space: nowrap;
+}
+.payment-value-input {
+    flex-grow: 1;
+    border: none !important;
+    border-bottom: 1px solid #000 !important;
+    text-align: left !important;
+    padding: 2px 5px !important;
+    min-width: 80px; /* Ancho mínimo flexible */
+}
+
 .nota-corp-footer { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px; align-items: end; }
 .totals-group { border: 2px solid #000; padding: 5px; font-size: 0.9em; }
 .total-row { display: flex; justify-content: space-between; align-items: center; margin: 2px 0; }
@@ -215,7 +246,6 @@ footer {
 }
 .print-only { display: none; }
 
-/* CAMBIO CLAVE: Estilos Responsivos solo para PANTALLA, no para impresión */
 @media screen and (max-width: 768px) {
     body { padding: 10px; }
     .container { padding: 15px; margin-top: 20px; }
@@ -295,9 +325,9 @@ footer {
         text-align: left;
         padding-left: 0;
     }
+    .nota-corp-payment-info { flex-wrap: wrap; }
 }
 
-/* --- ESTILOS DE IMPRESIÓN --- */
 @media print {
     body, html { background-color: #fff !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     
@@ -319,7 +349,11 @@ footer {
         font-family: Arial, sans-serif !important;
     }
     .print-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 1em; margin-bottom: 2em; }
-    .print-header img { max-width: 150px; }
+    .logo-print { /* Estilo para el logo en la impresión */
+        max-width: 150px;
+        height: auto;
+        object-fit: contain;
+    }
     .print-header h2 { font-size: 1.5em; margin: 0; color: #000 !important; }
     .print-results-grid { font-size: 1em; width: 100%; max-width: 600px; margin: 2em auto; }
     .print-results-grid .print-output-group { display: flex; justify-content: space-between; padding: 10px 5px; border-bottom: 1px solid #eee; }

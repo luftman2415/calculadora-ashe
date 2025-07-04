@@ -45,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const notaValorInputs = document.querySelectorAll('.valor-input');
     const notaDetailInputs = document.querySelectorAll('.detail-item-input');
     const notaInputsNavegables = Array.from(borradorNotasModal.querySelectorAll('input[type="text"], input[type="radio"]'));
+    const notaPagoFecha = document.getElementById('notaPagoFecha');
+    const notaPagoValorInput = document.getElementById('notaPagoValorInput');
 
     // Lista y Tema
     const facturasTabla = document.getElementById('facturasTabla');
@@ -165,12 +167,16 @@ document.addEventListener('DOMContentLoaded', () => {
         saveFacturas();
     }
     
+    // CAMBIO: La función de impresión ahora siempre incluye el logo
     function prepareAndPrint(title, contentHtml) {
         const printDate = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
         printArea.innerHTML = `
             <div class="print-header">
-                <img src="LOGO ASHE SIN FONDO.png" alt="Logo ASHE SAS">
-                <div class="title-date-group"><h2>${title}</h2><p>Generado el: ${printDate}</p></div>
+                <img src="LOGO ASHE SIN FONDO.png" alt="Logo ASHE SAS" class="logo-print">
+                <div class="title-date-group">
+                    <h2>${title}</h2>
+                    <p>Generado el: ${printDate}</p>
+                </div>
             </div>
             ${contentHtml}`;
         body.classList.add('printing-area');
@@ -178,8 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.remove('printing-area');
     }
 
-    // --- Lógica de Eventos ---
-    
     calcularBtn.addEventListener('click', () => {
         if (!valorFacturaTotalInput.value) return showNotification('El campo "Valor Total de la Factura" es obligatorio.', 'error');
         if (!fechaFacturaInput.value) return showNotification('El campo "Fecha de Emisión de Factura" es obligatorio.', 'error');
@@ -207,11 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const descuentoEncontrado = tablaDescuentos.find(d => d.dias === diasTranscurridos);
         const porcentajeDescuentoAplicado = descuentoEncontrado ? descuentoEncontrado.porcentaje : 0;
         
-        // CAMBIO CLAVE: Lógica simplificada y corregida
         const valorDescuento = valorBaseDescuentoTotal * (porcentajeDescuentoAplicado / 100);
         const totalPagar = valorFacturaTotal - valorDescuento;
         
-        // Lógica separada para la nota de crédito (cálculo del IVA del descuento)
         const descuentoSobreBaseConIva = baseImponibleParteConIva * (porcentajeDescuentoAplicado / 100);
         const ivaDelDescuento = descuentoSobreBaseConIva * IVA_PERCENTAGE;
 
@@ -220,9 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
             valorFacturaTotal,
             diasTranscurridos,
             porcentajeDescuentoAplicado,
-            valorDescuento,       // El descuento puro sobre la base
-            ivaDelDescuento,      // El IVA de ese descuento (para la nota)
-            totalPagar            // El total final a pagar
+            valorDescuento,
+            ivaDelDescuento,
+            totalPagar
         };
 
         diasTranscurridosOutput.textContent = `${diasTranscurridos} días`;
@@ -230,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         valorConIvaOutput.textContent = formatCurrency(valorParteConIvaBruto);
         ivaCalculadoOutput.textContent = formatCurrency(valorParteConIvaBruto - baseImponibleParteConIva);
         porcentajeDescuentoOutput.textContent = `${porcentajeDescuentoAplicado.toFixed(2)}%`;
-        valorDescuentoOutput.textContent = formatCurrency(valorDescuento); // Muestra el descuento puro
+        valorDescuentoOutput.textContent = formatCurrency(valorDescuento);
         totalPagarOutput.textContent = formatCurrency(totalPagar);
         
         addToListBtn.style.display = 'inline-block';
@@ -299,8 +301,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('notaDia').value = String(now.getDate()).padStart(2, '0');
         const facturaId = currentCalculation.id ? currentCalculation.id.replace('MDVA-', '') : facturaIdNumberInput.value.trim() || 'N/A';
         document.getElementById('notaFactura').value = facturaId;
+        
         notaDetailInputs.forEach(input => input.value = '');
         notaValorInputs.forEach(input => input.value = '');
+        
         const primerDetalleInput = document.querySelector('.detail-item-input');
         if (primerDetalleInput) primerDetalleInput.value = `Descuento por pronto pago factura MDVA-${facturaId}`;
         
@@ -310,6 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const primerValorInput = document.querySelector('.valor-input');
         if (primerValorInput) primerValorInput.value = formatCurrency(currentCalculation.valorDescuento);
         
+        if (fechaPagoInput.value) {
+            notaPagoFecha.textContent = new Date(fechaPagoInput.value + 'T00:00:00').toLocaleDateString('es-CO', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        }
+        notaPagoValorInput.value = formatCurrency(currentCalculation.totalPagar);
+        
         ['notaAgencia', 'notaCliente', 'notaRepVentas', 'notaNit', 'notaDireccion', 'notaCiudad', 'notaElaborado', 'notaAutorizado'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('notaCreditoRadio').checked = true;
         recalcularNotaTotalFinal();
@@ -317,6 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeBorradorBtn.addEventListener('click', () => toggleModal(borradorNotasModal, false));
+    
     printNotaBtn.addEventListener('click', () => {
         body.classList.add('printing-nota');
         window.print();
@@ -335,12 +345,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    notaIvaInput.addEventListener('input', recalcularNotaTotalFinal);
-    notaIvaInput.addEventListener('blur', (e) => {
+    notaPagoValorInput.addEventListener('blur', (e) => {
         const rawValue = parseFormattedCurrency(e.target.value);
         e.target.value = rawValue > 0 ? formatCurrency(rawValue) : '';
     });
-    notaIvaInput.addEventListener('focus', (e) => {
+    notaPagoValorInput.addEventListener('focus', (e) => {
         const rawValue = parseFormattedCurrency(e.target.value);
         e.target.value = rawValue > 0 ? rawValue : '';
     });

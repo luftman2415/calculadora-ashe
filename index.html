@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="manifest" href="site.webmanifest">
+    <!-- <link rel="manifest" href="site.webmanifest"> -->
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
@@ -271,6 +271,14 @@
                         </div>
                     </div>
                 </section>
+
+                <section class="nota-corp-payment-info">
+                    <span class="payment-label">Nota: Pago realizado el día</span>
+                    <span id="notaPagoFecha"></span>
+                    <span class="payment-label">por valor de:</span>
+                    <input type="text" id="notaPagoValorInput" class="form-input-corp payment-value-input">
+                </section>
+
                 <footer class="nota-corp-footer">
                     <div class="field-group">
                         <label for="notaElaborado">Elaborado por</label>
@@ -287,7 +295,7 @@
                         </div>
                          <div class="total-row">
                             <label>(+) Iva</label>
-                            <input type="text" id="notaIvaInput" class="form-input-corp total-input">
+                            <input type="text" id="notaIvaInput" class="form-input-corp total-input" readonly>
                         </div>
                          <div class="total-row total-final">
                             <label>Total</label>
