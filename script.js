@@ -84,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         notificationBar.className = `notification ${type}`;
         notificationBar.style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        notificationTimeout = setTimeout(() => notificationBar.style.display = 'none', 3000);
     }
     
     function showUndo(msg) {
@@ -155,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${formatCurrency(factura.valorFacturaTotal)}</td>
                     <td>${factura.diasTranscurridos}</td>
                     <td>${factura.porcentajeDescuentoAplicado.toFixed(2)}%</td>
-                    <td>${formatCurrency(factura.valorDescuento + factura.ivaDelDescuento)}</td>
+                    <td>${formatCurrency(factura.valorDescuento)}</td>
                     <td><strong>${formatCurrency(factura.totalPagar)}</strong></td>
                     <td><button class="delete-factura-btn danger-btn" data-index="${index}">X</button></td>
                 `;
@@ -179,6 +178,8 @@ document.addEventListener('DOMContentLoaded', () => {
         body.classList.remove('printing-area');
     }
 
+    // --- Lógica de Eventos ---
+    
     calcularBtn.addEventListener('click', () => {
         if (!valorFacturaTotalInput.value) return showNotification('El campo "Valor Total de la Factura" es obligatorio.', 'error');
         if (!fechaFacturaInput.value) return showNotification('El campo "Fecha de Emisión de Factura" es obligatorio.', 'error');
@@ -201,25 +202,27 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const valorParteConIvaBruto = valorFacturaTotal - valorSinIvaDirecto;
         const baseImponibleParteConIva = valorParteConIvaBruto / (1 + IVA_PERCENTAGE);
+        const valorBaseDescuentoTotal = valorSinIvaDirecto + baseImponibleParteConIva;
+        
         const descuentoEncontrado = tablaDescuentos.find(d => d.dias === diasTranscurridos);
         const porcentajeDescuentoAplicado = descuentoEncontrado ? descuentoEncontrado.porcentaje : 0;
         
+        // CAMBIO CLAVE: Lógica simplificada y corregida
+        const valorDescuento = valorBaseDescuentoTotal * (porcentajeDescuentoAplicado / 100);
+        const totalPagar = valorFacturaTotal - valorDescuento;
+        
+        // Lógica separada para la nota de crédito (cálculo del IVA del descuento)
         const descuentoSobreBaseConIva = baseImponibleParteConIva * (porcentajeDescuentoAplicado / 100);
         const ivaDelDescuento = descuentoSobreBaseConIva * IVA_PERCENTAGE;
-
-        const valorBaseDescuentoTotal = valorSinIvaDirecto + baseImponibleParteConIva;
-        const valorDescuento = valorBaseDescuentoTotal * (porcentajeDescuentoAplicado / 100);
-        const totalFinalDescuento = valorDescuento + ivaDelDescuento;
-        const totalPagar = valorFacturaTotal - totalFinalDescuento;
 
         currentCalculation = {
             id: facturaIdNumberInput.value.trim() ? `MDVA-${facturaIdNumberInput.value.trim()}` : 'N/A',
             valorFacturaTotal,
             diasTranscurridos,
             porcentajeDescuentoAplicado,
-            valorDescuento,
-            ivaDelDescuento,
-            totalPagar
+            valorDescuento,       // El descuento puro sobre la base
+            ivaDelDescuento,      // El IVA de ese descuento (para la nota)
+            totalPagar            // El total final a pagar
         };
 
         diasTranscurridosOutput.textContent = `${diasTranscurridos} días`;
@@ -227,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         valorConIvaOutput.textContent = formatCurrency(valorParteConIvaBruto);
         ivaCalculadoOutput.textContent = formatCurrency(valorParteConIvaBruto - baseImponibleParteConIva);
         porcentajeDescuentoOutput.textContent = `${porcentajeDescuentoAplicado.toFixed(2)}%`;
-        valorDescuentoOutput.textContent = formatCurrency(totalFinalDescuento);
+        valorDescuentoOutput.textContent = formatCurrency(valorDescuento); // Muestra el descuento puro
         totalPagarOutput.textContent = formatCurrency(totalPagar);
         
         addToListBtn.style.display = 'inline-block';
@@ -424,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 factura.valorFacturaTotal,
                 factura.diasTranscurridos,
                 factura.porcentajeDescuentoAplicado.toFixed(2),
-                factura.valorDescuento + factura.ivaDelDescuento,
+                factura.valorDescuento,
                 factura.totalPagar
             ].map(escapeCsvField);
             csvContent += rowData.join(",") + "\n";
